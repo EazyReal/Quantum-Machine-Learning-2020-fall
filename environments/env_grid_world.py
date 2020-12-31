@@ -27,14 +27,18 @@ class TaskEnvironment(object):
     which contains rewards in well-defined places and possibly walls that constrain 
     the agent's movement."""
     
-    def __init__ (self, dimensions):
+    def __init__ (self, config):
         """Given a list of two integers>=1 which specify x,y-extensions, 
         initialize a grid world. Simple example: env = TaskEnvironment([2,3])"""
+        dimensions, walls, destination = config
         self.max_steps_per_trial = 10**6
         self.num_percepts_list = dimensions
         self.position = np.array([0, 0]) #keeps track of where the agent is located  
         self.rewards = np.zeros(dimensions)  #specifies the rewards (if any) located at each gridpoint
-        self.rewards[-1, -1] = 1  #By default, only the furthest corner is rewarded
+        if destination != None:
+            self.rewards[destination[0], destination[1]] = 1
+        else:
+            self.rewards[-1, -1] = 1  #By default, only the furthest corner is rewarded
         self.act_list = [[+1,0],[0,+1],[-1,0],[0,-1]]  #hard-code which action indices correspond to which movements in terms of x,y changes
         # each position in the walls array contains a nested list of forbidden moves.
         #The first entry refers to forbidden x moves, the second to y.
@@ -42,15 +46,25 @@ class TaskEnvironment(object):
         self.walls=[[[[],[]] for ycoord in range(self.num_percepts_list[1])] for xcoord in range(self.num_percepts_list[0])]
         #initialize with boundary walls  
         # use world.walls[x][y]=[move1,move2] or .append(move) to update
-        # TODO
-        print(self.walls)
+        # TODO, add self-defined obstables
+        # ---this is my code---
+        for x, y in walls:
+            for act in self.act_list:
+                nx = x + act[0]
+                ny = y + act[1]
+                if(nx >= 0 and nx < self.num_percepts_list[0]):
+                        if(ny >= 0 and ny < self.num_percepts_list[1]):
+                            if act[0] != 0:
+                                self.walls[nx][ny][0].append(-act[0])
+                            if act[1] != 0:
+                                self.walls[nx][ny][1].append(-act[1])
+        # this is to add the boundary condition!
         for xcoord in range(self.num_percepts_list[0]):
             self.walls[xcoord][0][1].append(-1)
             self.walls[xcoord][dimensions[1]-1][1].append(+1)
         for ycoord in range(self.num_percepts_list[1]):
             self.walls[0][ycoord][0].append(-1)
             self.walls[dimensions[0]-1][ycoord][0].append(+1)
-        print("after edge conditions", self.walls, sep='\n')
     
     def reset(self):
         self.position = np.array([0, 0])

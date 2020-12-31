@@ -25,16 +25,19 @@ recording learning data and ultimately saveing it in the results folder."""
 """Choose which agent and which environment you would like to use, from EnvList() and AgentList().
 Note that the parameters specified below must match the required input formats of the chosen types.
 (These requirements are specified in the docstrings of the respective classes.) """
+
+"""
+Set up Experiment Here!!
+"""
 # TODO
 env_name = 'Grid_World'
-env_config = 2, 1, max_num_trials  #need to pass the number of agents for a multi-agent environment
-agent_name = 'PS-basic'
-# agent config is automated
+walls = [[1,2], [2,2], [3,2], [4,5], [0,7], [1,7], [2,7]]
+destination = [0, 8]
+env_config = ((6,9), walls, destination)  #need to pass the number of agents for a multi-agent environment
+agent_name = 'PS-basic' # agent config is automated
 #The option multiple_agents creates a situation where multiple agents inhabit a single environment.
 # Only specific classes of environment support this. 
 multiple_agents = False
-
-
 # performance evaluation
 num_agents = 100
 #When multiple_agents==False, the learning process is repeated with several independent agents in order to gather statistics.

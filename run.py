@@ -17,6 +17,8 @@ if not os.path.exists('results'):
 	os.makedirs('results')
 #import functions for initialising agents and environments, controlling their interaction etc
 from rl_framework import *
+from tqdm import tqdm
+from tqdm import trange
 
 """This is the master file, which calls other functions to create agents and environments and
 run the interaction between them. It may range over different values of parameters,
@@ -49,11 +51,14 @@ if not multiple_agents:
 
 	n_param_scan = 11  #Loop over different values of a certain parameter to test which one works best
 	average_param_performance = np.zeros(n_param_scan)
-	for i_param_scan in range(n_param_scan):
+	average_param_performance_step = np.zeros(n_param_scan)
+	## TODO, AF, learning curve for each eta
+	average_learning_curves = [] 
+	for i_param_scan in trange(n_param_scan):
 		ps_eta = i_param_scan * 0.1 #set the ps_eta parameter to different values
-	
 		average_learning_curve = np.zeros(max_num_trials)  #this will record the rewards earned at each trial, averaged over all agents
-		for i_agent in range(num_agents):	#train one agent at a time, and iterate over several agents	
+		average_step_curve = np.zeros(max_num_trials)
+		for i_agent in trange(num_agents):	#train one agent at a time, and iterate over several agents	
 			## TODO, configure the env_ correctly, this should be put at front!
 			## env_config = 2, 1, max_num_trials  #need to pass the number of agents for a multi-agent environment
 			env = CreateEnvironment(env_name, env_config)
@@ -68,15 +73,20 @@ if not multiple_agents:
 				agent_config = [num_actions, num_percepts_list, generalization, gamma_damping, eta_glow_damping, policy_type, beta_softmax, hash_hash_bool, majority_vote, majority_time, number_votes]
 			agent = CreateAgent(agent_name, agent_config)	
 			interaction = Interaction(agent, env)
-			learning_curve = interaction.single_learning_life(max_num_trials, max_steps_per_trial) #This function executes a 'learning life' between the agent and the environment
+			## TODO, AF
+			learning_curve, step_curve = interaction.single_learning_life(max_num_trials, max_steps_per_trial) #This function executes a 'learning life' between the agent and the environment
 			average_learning_curve += learning_curve/num_agents
+			## TODO, AF
+			average_step_curve += step_curve/num_agents
 		average_param_performance[i_param_scan] = average_learning_curve[-1]  #The performance for a given value of the parameter is taken to be the average reward at the last trial.
+		## TODO, AF
+		average_param_performance_step[i_param_scan] = average_step_curve[-1] 
 
 elif multiple_agents:  #Here we do not iterate over a number of independent agents, but rather have them all in a single instance of the environment.
     
 	n_param_scan = 5
 	average_param_performance = np.zeros(n_param_scan)
-	for i_param_scan in range(n_param_scan):
+	for i_param_scan in trange(n_param_scan):
 		ps_gamma = 10**(-i_param_scan)
 		env_config = num_agents, 40, 4  #need to pass the number of agents for a multi-agent environment
 		env = CreateEnvironment(env_name, env_config) 
@@ -91,7 +101,7 @@ elif multiple_agents:  #Here we do not iterate over a number of independent agen
 			agent_config = [num_actions, num_percepts_list, generalization, gamma_damping, eta_glow_damping, policy_type, beta_softmax, hash_hash_bool, majority_vote, majority_time, number_votes]
 			
 		agent_list = []
-		for i_agent in range(num_agents):	
+		for i_agent in trange(num_agents):	
 			agent_list.append(CreateAgent(agent_name, agent_config=agent_config))
          
 		interaction = Interaction_Multiple(agent_list, env)
@@ -113,3 +123,5 @@ if num_agents == 1:
 else:
 	np.savetxt(current_file_directory+'/results'+'/param_performance', average_param_performance, fmt='%.3f', delimiter=',')
 np.savetxt(current_file_directory+'/results'+'/learning_curve', average_learning_curve, fmt='%.3f', delimiter=',')
+## TODO, AF
+np.savetxt(current_file_directory+'/results'+'/step_curve', average_step_curve, fmt='%.3f', delimiter=',')

@@ -93,6 +93,7 @@ class Interaction(object):
         (ending the trial sooner if the environment returns done),
         and return an array containing the time-averaged reward from each trial."""
 		learning_curve = np.zeros(num_trials)
+		step_curve = np.zeros(num_trials)
 		reward = 0 #temporarily stores the reward for the most recent action
 		for i_trial in range(num_trials):
 			reward_trial = 0 #additive counter of the total rewards earned during the current trial
@@ -103,7 +104,9 @@ class Interaction(object):
 				if done:
 					break
 			learning_curve[i_trial] = float(reward_trial)/(t+1)
-		return learning_curve
+			## TODO, AF
+			step_curve[i_trial] = (t+1)
+		return learning_curve, step_curve
 		
 	def single_interaction_step(self, discretized_observation, reward):
 		action = self.agent.deliberate_and_learn(discretized_observation, reward)

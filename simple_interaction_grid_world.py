@@ -18,9 +18,12 @@ Different environments or agent types require different arguments,
 as specified in the docstring/help inside the respective files."""
 
 #environment
-import env_invasion_game
-#invasion_game requires no additional arguments
-env = env_invasion_game.TaskEnvironment()
+import env_grid_world
+#set up the walls
+walls = [[1,2], [2,2], [3,2], [4,5], [0,7], [1,7], [2,7]]
+destination = [0, 8]
+env_config = ((6,9), walls, destination) 
+env = env_grid_world.TaskEnvironment(env_config)
 
 #agent
 import ps_agent_basic

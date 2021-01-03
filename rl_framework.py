@@ -33,7 +33,11 @@ def CreateEnvironment(env_name, env_config = None):
         - attrib max_steps_per_trial: integer; after this number of steps the environment returns trial_finished=True"""
 	if env_name == 'Driver_Game':
 		import env_driver_game
-		env = env_driver_game.TaskEnvironment()         
+		env = env_driver_game.TaskEnvironment()    
+	## TODO, AF
+	elif env_name == 'Quantum': 
+		import env_quantum_circuit_synthesis
+		env = env_quantum_circuit_synthesis.TaskEnvironment(env_config)  
 	elif env_name == 'Invasion_Game': 
 		import env_invasion_game
 		env = env_invasion_game.TaskEnvironment()
@@ -47,8 +51,8 @@ def CreateEnvironment(env_name, env_config = None):
 		env = env_locust.TaskEnvironment(num_agents, world_size, sensory_range)
 	elif env_name == 'Grid_World':
 		import env_grid_world
-		dimensions = env_config
-		env = env_grid_world.TaskEnvironment(dimensions)
+		## TODO, AF
+		env = env_grid_world.TaskEnvironment(env_config)
 	elif env_name == 'Mountain_Car':
 		import env_mountain_car
 		discretization_num_bins = env_config

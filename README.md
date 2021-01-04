@@ -49,9 +49,9 @@ https://hackmd.io/oS4M5BE6TGOD3qCAFSa90w
 ---
 
 ## HW1 
-- [QML HW1](/d4KVj3YsQuSrRJwCDzly1w)
+- [QML HW1](https://hackmd.io/d4KVj3YsQuSrRJwCDzly1w)
 
 ---
 
 ## HW2
-- [QML HW2](/MkTt8-07SiWvv-p0LqR6Pw)
+- [QML HW2](https://hackmd.io/MkTt8-07SiWvv-p0LqR6Pw)
